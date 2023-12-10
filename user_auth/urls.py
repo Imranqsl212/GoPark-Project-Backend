@@ -13,4 +13,5 @@ urlpatterns = [
     path("send_email/", request_otp),
     path("check_otp/", enter_otp),
     path("reset_password/", reset_password),
+    path('welcome/',welcome),
 ]
