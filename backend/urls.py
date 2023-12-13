@@ -6,4 +6,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api-auth/", include("user_auth.urls")),
 ]
+
+#css and js for gunicorn
 urlpatterns += staticfiles_urlpatterns()
