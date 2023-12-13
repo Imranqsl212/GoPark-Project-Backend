@@ -12,7 +12,7 @@ from rest_framework.permissions import BasePermission
 
 @api_view(["GET"])
 def welcome(request):
-    return Response({"message": "Welcome to the API!"}, status=status.HTTP_200_OK)
+    return Response({"message": "Welcome to the defTeam-API!"}, status=status.HTTP_200_OK)
 
 
 def generate_random_integers() -> str:

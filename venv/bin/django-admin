@@ -1,4 +1,4 @@
-#!/Users/imranmzakirov/Desktop/drf-project/backend/venv/bin/python3.11
+#!/Users/imranmzakirov/Desktop/backend/venv/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys
