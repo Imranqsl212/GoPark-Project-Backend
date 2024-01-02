@@ -16,38 +16,25 @@ def welcome(request):
 
 
 def generate_random_integers() -> str:
-    """
-    Generates a random 6-digit integer.
-
-    Returns:
-        str: A string representing a random 6-digit integer.
-    """
     random_integers = "".join(str(random.randint(1, 9)) for _ in range(6))
     return random_integers
-
 
 @api_view(["POST"])
 def register_user(request):
     if request.method == "POST":
-        try:
-            serializer = UserRegistrationSerializer(data=request.data)
-            if serializer.is_valid():
-                user = serializer.save()
-                token_serializer = CustomTokenObtainPairSerializer(data=request.data)
-                token = token_serializer.get_token(user=user)
-                return Response(
-                    {
-                        "refresh": str(token),
-                        "access": str(token.access_token),
-                    },
-                    status=status.HTTP_201_CREATED,
-                )
-            else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response(
-                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        serializer = UserRegistrationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        token_serializer = CustomTokenObtainPairSerializer(data=request.data)
+        token_serializer.is_valid(raise_exception=True)
+        token = token_serializer.get_token(user=user)
+
+        return Response(
+            {"refresh": str(token), "access": str(token.access_token)},
+            status=status.HTTP_201_CREATED,
+        )
+    return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
@@ -83,7 +70,6 @@ def get_all_users_info(request):
         try:
             users = MyUser.objects.all()
             serializer = UserSerializer(users, many=True)
-            user_info = serializer.data
             user_info = [
                 {
                     "id": user["id"],
@@ -92,25 +78,16 @@ def get_all_users_info(request):
                     "admin": user["is_superuser"],
                     "created_date": user["created_date"],
                 }
-                for user in user_info
+                for user in serializer.data
             ]
             return Response(user_info, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response(
-                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        except MyUser.DoesNotExist as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    if request.method == "DELETE":
-        try:
-            MyUser.objects.all().delete()
-            return Response(
-                {"message": "All user accounts deleted"},
-                status=status.HTTP_204_NO_CONTENT,
-            )
-        except Exception as e:
-            return Response(
-                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+    elif request.method == "DELETE":
+        MyUser.objects.all().delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 
 @api_view(["GET"])
@@ -121,15 +98,11 @@ def detail_user_account(request, userid):
         return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "GET":
-        try:
-            serializer = UserSerializer(user)
-            user_info = serializer.data
-            user_info["admin"] = user.is_superuser
-            return Response(user_info, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response(
-                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        serializer = UserSerializer(user)
+        user_info = serializer.data
+        user_info["admin"] = user.is_superuser
+        return Response(user_info, status=status.HTTP_200_OK)
+
 
 
 @api_view(["POST"])
@@ -137,24 +110,23 @@ def detail_user_account(request, userid):
 def change_password(request):
     if request.method == "POST":
         serializer = PasswordChangeSerializer(data=request.data)
-        if serializer.is_valid():
-            user = request.user
-            old_password = serializer.validated_data.get("old_password")
-            new_password = serializer.validated_data.get("new_password")
+        serializer.is_valid(raise_exception=True)
 
-            if not user.check_password(old_password):
-                return Response(
-                    {"detail": "Invalid old password"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+        user = request.user
+        old_password = serializer.validated_data.get("old_password")
+        new_password = serializer.validated_data.get("new_password")
 
-            user.set_password(new_password)
-            user.save()
-
+        if not user.check_password(old_password):
             return Response(
-                {"detail": "Password updated successfully"}, status=status.HTTP_200_OK
+                {"detail": "Invalid old password"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(new_password)
+        user.save()
+
+        return Response({"detail": "Password updated successfully"}, status=status.HTTP_200_OK)
+
 
 
 # -----------
