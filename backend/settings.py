@@ -1,5 +1,3 @@
-
-
 from pathlib import Path
 from datetime import timedelta
 import os
@@ -11,7 +9,7 @@ load_dotenv(find_dotenv())
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -27,21 +25,22 @@ CORS_ALLOW_METHODS = (
     "PUT",
 )
 
-#my apps
+# my apps
 MY_APPS = [
     "user_auth.apps.UserAuthConfig",
 ]
 
-#installed apps
+# installed apps
 MY_INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "django_filters",
+    "drf-yasg",
 ]
 
-#Rest Framework
+# Rest Framework
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -71,8 +70,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
-
 
 
 ROOT_URLCONF = "backend.urls"
@@ -132,18 +129,18 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-#Static, Media etc
+# Static, Media etc
 STATIC_URL = "/static/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
-#Some models
+# Some models
 AUTH_USER_MODEL = "user_auth.MyUser"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-#JWT settings
+# JWT settings
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=100),
@@ -179,11 +176,10 @@ SIMPLE_JWT = {
 }
 
 
-#EMAIL SMTP Settings
+# EMAIL SMTP Settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_PORT = 587
-EMAIL_HOST =  "smtp.gmail.com"
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'zakirovimran333@gmail.com'
-EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
-
+EMAIL_HOST_USER = "zakirovimran333@gmail.com"
+EMAIL_HOST_PASSWORD = os.environ["EMAIL_HOST_PASSWORD"]
