@@ -6,6 +6,7 @@ django-filter==23.5
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.3.1
 drf-yasg==1.21.7
+gunicorn==21.2.0
 inflection==0.5.1
 packaging==23.2
 PyJWT==2.8.0
