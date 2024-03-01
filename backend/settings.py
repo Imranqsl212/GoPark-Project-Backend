@@ -28,6 +28,7 @@ CORS_ALLOW_METHODS = (
 # my apps
 MY_APPS = [
     "user_auth.apps.UserAuthConfig",
+    "ride.apps.RideConfig"
 ]
 
 # installed apps
