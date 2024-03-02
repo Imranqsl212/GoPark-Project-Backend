@@ -8,11 +8,6 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count, F
 
 
-class CustomRidesPagination(PageNumberPagination):
-    page_size_query_param = "page_size"
-    max_page_size = 1000
-
-
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def create_ride(request):
@@ -22,26 +17,14 @@ def create_ride(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_all_rides(request):
-    start_time = request.query_params.get('start_time', None)
-    max_applicants = request.query_params.get('max_applicants', None)
+    rides = Ride.objects.all()
+    serializer = RideSerializer(rides, many=True)
+    return Response(serializer.data)
 
-    if start_time:
-        rides = Ride.objects.filter(start_time__gte=start_time)
-
-    if max_applicants:
-        rides = Ride.objects.filter(max_applicants__gte=max_applicants)
-
-    if not start_time and not max_applicants:
-        rides = Ride.objects.all()
-
-    paginator = CustomRidesPagination()
-    result_page = paginator.paginate_queryset(rides, request)
-    serializer = RideSerializer(result_page, many=True)
-
-    return paginator.get_paginated_response(serializer.data)
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -110,5 +93,3 @@ def delete_ride(request, ride_id):
 
     ride.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
-
-

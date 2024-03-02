@@ -1,11 +1,11 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.conf import settings
 
 
 class Ride(models.Model):
     from_location = models.CharField(max_length=100)
     to_location = models.CharField(max_length=100)
-    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     start_time = models.DateTimeField()
     expected_time_hours = models.PositiveIntegerField()
     additional_comment = models.TextField()
@@ -19,7 +19,7 @@ class RideApplication(models.Model):
     ride = models.ForeignKey(
         Ride, on_delete=models.CASCADE, related_name="applications"
     )
-    applicant = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    applicant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     waiting_location = models.CharField(max_length=100)
     is_driver = models.BooleanField(default=False)
 
