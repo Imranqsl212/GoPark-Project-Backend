@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import Ride, RideApplication
-
+from datetime import datetime
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,3 +26,12 @@ class RideSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ride
         fields = "__all__"
+
+    def validate(self, data):
+        if 'start_time' in self.context['request'].query_params:
+            start_time = self.context['request'].query_params['start_time']
+            try:
+                datetime.strptime(start_time, '%Y-%m-%dT%H:%M:%S')
+            except ValueError:
+                raise serializers.ValidationError("Invalid start time format. Use ISO 8601 format.")
+        return data
