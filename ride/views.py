@@ -6,7 +6,9 @@ from rest_framework import status
 from .models import Ride
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count, F
-
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics
+from filters import RideFilter
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -20,10 +22,11 @@ def create_ride(request):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def get_all_rides(request):
-    rides = Ride.objects.all()
-    serializer = RideSerializer(rides, many=True)
-    return Response(serializer.data)
+class RideList(generics.ListAPIView):
+    queryset = Ride.objects.all()
+    serializer_class = RideSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = RideFilter
 
 
 @api_view(["GET"])

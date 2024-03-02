@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
 
-
 class Ride(models.Model):
     from_location = models.CharField(max_length=100)
     to_location = models.CharField(max_length=100)
@@ -25,3 +24,4 @@ class RideApplication(models.Model):
 
     def __str__(self):
         return f"{self.applicant.username} applied for {self.ride}"
+
